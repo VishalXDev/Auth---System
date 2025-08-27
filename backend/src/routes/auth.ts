@@ -1,14 +1,83 @@
 import { Router } from 'express';
-import { verifyOtpSchema } from '@/schemas';
 import { prisma } from '@/db';
-import { verifyOtpHash, isExpired, attemptsExceeded, recordAttempt } from '@/otp';
+import { verifyOtpSchema } from '../schemas';
+import {
+  verifyOtpHash,
+  isExpired,
+  attemptsExceeded,
+  recordAttempt,
+  hashOtp,
+} from '@/otp';
 import { limitVerifyByPhone } from '@/ratelimit';
 import { zodReply, badRequest, ok } from '@/http';
 import { issueTokens, rotateRefresh, revokeRefresh, clearTokens } from '@/tokens';
 import { requireAuth, AuthedRequest } from '@/middleware/auth';
 import { COOKIE_NAMES } from '@/config';
+import crypto from 'crypto';
 
 const router = Router();
+
+/**
+ * POST /auth/register
+ */
+router.post('/register', async (req, res) => {
+  const { phone } = req.body;
+  if (!phone) return res.status(400).json({ error: 'Phone is required' });
+
+  try {
+    const user = await prisma.user.upsert({
+      where: { phone },
+      update: {},
+      create: { phone },
+    });
+
+    return ok(res, {
+      message: 'User registered',
+      user: { id: user.id, phone: user.phone },
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Failed to register user' });
+  }
+});
+
+/**
+ * POST /auth/send-otp
+ */
+router.post('/send-otp', async (req, res) => {
+  const { phone } = req.body;
+  if (!phone) return res.status(400).json({ error: 'Phone is required' });
+
+  try {
+    // 👇 If you pass ?dev=123456 in URL, use fixed OTP for testing
+    const devOtp = req.query.dev as string | undefined;
+    const code =
+      devOtp && /^\d{6}$/.test(devOtp)
+        ? devOtp
+        : Math.floor(100000 + Math.random() * 900000).toString();
+
+    const challengeId = crypto.randomUUID();
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+
+    await prisma.otp.create({
+      data: {
+        challengeId,
+        phone,
+        codeHash: await hashOtp(phone, code),
+        expiresAt,
+        attempts: 0,
+      },
+    });
+
+    // For local dev, log OTP in console
+    console.log(`📲 OTP for ${phone} [challengeId=${challengeId}]: ${code}`);
+
+    return ok(res, { challengeId, message: 'OTP sent (check logs)' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Failed to send OTP' });
+  }
+});
 
 /**
  * POST /auth/verify-otp
@@ -18,7 +87,7 @@ router.post('/verify-otp', limitVerifyByPhone(), async (req, res) => {
     const { phone, challengeId, code } = verifyOtpSchema.parse(req.body);
 
     const otpRec = await prisma.otp.findUnique({ where: { challengeId } });
-    if (!otpRec) return badRequest(res, 'Invalid challenge');
+    if (!otpRec) return badRequest(res, 'Invalid challengeId');
 
     if (isExpired(otpRec.expiresAt)) return badRequest(res, 'OTP expired');
     if (attemptsExceeded(otpRec.attempts)) return badRequest(res, 'Too many attempts');
