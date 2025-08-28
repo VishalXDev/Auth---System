@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import api from "@/lib/api";
 import { setAccessToken } from "@/lib/auth";
-import { Phone, Send, Shield, ArrowRight, Check, AlertCircle } from "lucide-react";
+import { Phone, Send, Shield, ArrowRight, Check, AlertCircle, ArrowLeft } from "lucide-react";
 
 // E.164 formatter (assume India for 10-digit input)
 function toE164(raw: string) {
@@ -61,9 +61,7 @@ export default function LoginPage() {
                 code,
             });
 
-            // Store access token securely
             setAccessToken(res.data.accessToken);
-
             showMessage("Login successful! Redirecting...", "success");
 
             setTimeout(() => {
@@ -84,17 +82,24 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4 sm:p-6 lg:p-8">
-            <div className="w-full max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-xl">
+        <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
+            {/* Background */}
+            <div className="absolute inset-0">
+                <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900"></div>
+                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
+                <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl"></div>
+            </div>
+
+            <div className="relative w-full max-w-md">
                 {/* Header */}
-                <div className="text-center mb-6 sm:mb-8 lg:mb-10">
-                    <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-4 lg:mb-6">
-                        <Phone className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-white" />
+                <div className="text-center mb-8">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-6 shadow-lg">
+                        <Phone className="w-8 h-8 text-white" />
                     </div>
-                    <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 mb-2 lg:mb-4">
+                    <h1 className="text-3xl font-bold text-white mb-2">
                         Welcome Back
                     </h1>
-                    <p className="text-sm sm:text-base lg:text-lg text-gray-600">
+                    <p className="text-slate-400">
                         {step === "phone"
                             ? "Enter your phone number to continue"
                             : "Enter the verification code"}
@@ -102,49 +107,52 @@ export default function LoginPage() {
                 </div>
 
                 {/* Progress Indicator */}
-                <div className="flex items-center justify-center mb-6 sm:mb-8 lg:mb-10">
-                    <div className="flex items-center space-x-3 sm:space-x-4 lg:space-x-6">
+                <div className="flex items-center justify-center mb-8">
+                    <div className="flex items-center space-x-4">
                         <div
-                            className={`flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 rounded-full border-2 transition-all duration-300 ${step === "phone"
+                            className={`flex items-center justify-center w-8 h-8 rounded-full border-2 transition-all duration-300 ${
+                                step === "phone"
                                     ? "border-blue-500 bg-blue-500 text-white"
                                     : "border-green-500 bg-green-500 text-white"
-                                }`}
+                            }`}
                         >
                             {step === "otp" ? (
-                                <Check className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
+                                <Check className="w-4 h-4" />
                             ) : (
                                 "1"
                             )}
                         </div>
                         <div
-                            className={`h-0.5 w-12 sm:w-16 lg:w-20 transition-all duration-300 ${step === "otp" ? "bg-green-500" : "bg-gray-300"
-                                }`}
+                            className={`h-0.5 w-16 transition-all duration-300 ${
+                                step === "otp" ? "bg-green-500" : "bg-slate-600"
+                            }`}
                         />
                         <div
-                            className={`flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 rounded-full border-2 transition-all duration-300 ${step === "otp"
+                            className={`flex items-center justify-center w-8 h-8 rounded-full border-2 transition-all duration-300 ${
+                                step === "otp"
                                     ? "border-blue-500 bg-blue-500 text-white"
-                                    : "border-gray-300 bg-white text-gray-400"
-                                }`}
+                                    : "border-slate-600 bg-slate-800 text-slate-400"
+                            }`}
                         >
-                            <Shield className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
+                            <Shield className="w-4 h-4" />
                         </div>
                     </div>
                 </div>
 
                 {/* Main Card */}
-                <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl p-6 sm:p-8 lg:p-10 transition-all duration-500">
+                <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-8">
                     {step === "phone" ? (
-                        <form onSubmit={handleSendOtp} className="space-y-4 sm:space-y-6">
+                        <form onSubmit={handleSendOtp} className="space-y-6">
                             <div className="space-y-2">
                                 <label
                                     htmlFor="phone"
-                                    className="text-sm sm:text-base font-medium text-gray-700"
+                                    className="text-sm font-medium text-slate-300"
                                 >
                                     Phone Number
                                 </label>
                                 <div className="relative">
-                                    <div className="absolute inset-y-0 left-0 pl-3 sm:pl-4 flex items-center pointer-events-none">
-                                        <Phone className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
+                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <Phone className="h-5 w-5 text-slate-400" />
                                     </div>
                                     <input
                                         id="phone"
@@ -152,12 +160,12 @@ export default function LoginPage() {
                                         value={phone}
                                         onChange={(e) => setPhone(e.target.value)}
                                         placeholder="+919876543210"
-                                        className="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-3 sm:py-4 lg:py-5 border border-gray-300 rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-base sm:text-lg"
+                                        className="w-full pl-12 pr-4 py-4 bg-slate-900 border border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-white placeholder-slate-400"
                                         required
                                         disabled={loading}
                                     />
                                 </div>
-                                <p className="text-xs sm:text-sm text-gray-500">
+                                <p className="text-sm text-slate-400">
                                     We'll send you a verification code
                                 </p>
                             </div>
@@ -165,33 +173,33 @@ export default function LoginPage() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 sm:py-4 lg:py-5 rounded-xl sm:rounded-2xl font-medium text-base sm:text-lg hover:from-blue-600 hover:to-purple-700 focus:outline-none focus:ring-4 focus:ring-blue-500/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
                             >
                                 {loading ? (
                                     <>
-                                        <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                                         <span>Sending...</span>
                                     </>
                                 ) : (
                                     <>
-                                        <Send className="w-4 h-4 sm:w-5 sm:h-5" />
+                                        <Send className="w-5 h-5" />
                                         <span>Send OTP</span>
-                                        <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                                        <ArrowRight className="w-5 h-5" />
                                     </>
                                 )}
                             </button>
                         </form>
                     ) : (
-                        <form onSubmit={handleVerifyOtp} className="space-y-4 sm:space-y-6">
-                            <div className="text-center mb-4 sm:mb-6">
-                                <p className="text-sm sm:text-base text-gray-600">
+                        <form onSubmit={handleVerifyOtp} className="space-y-6">
+                            <div className="text-center mb-6">
+                                <p className="text-slate-300">
                                     Code sent to{" "}
-                                    <span className="font-semibold text-gray-900">{phone}</span>
+                                    <span className="font-semibold text-white">{phone}</span>
                                 </p>
                                 <button
                                     type="button"
                                     onClick={handleBackToPhone}
-                                    className="text-blue-500 hover:text-blue-600 text-sm font-medium mt-1"
+                                    className="text-blue-400 hover:text-blue-300 text-sm font-medium mt-1 transition-colors duration-200"
                                 >
                                     Change number
                                 </button>
@@ -200,13 +208,13 @@ export default function LoginPage() {
                             <div className="space-y-2">
                                 <label
                                     htmlFor="code"
-                                    className="text-sm sm:text-base font-medium text-gray-700"
+                                    className="text-sm font-medium text-slate-300"
                                 >
                                     Verification Code
                                 </label>
                                 <div className="relative">
-                                    <div className="absolute inset-y-0 left-0 pl-3 sm:pl-4 flex items-center pointer-events-none">
-                                        <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
+                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <Shield className="h-5 w-5 text-slate-400" />
                                     </div>
                                     <input
                                         id="code"
@@ -216,13 +224,13 @@ export default function LoginPage() {
                                             setCode(e.target.value.replace(/\D/g, "").slice(0, 6))
                                         }
                                         placeholder="000000"
-                                        className="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-3 sm:py-4 lg:py-5 border border-gray-300 rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-base sm:text-lg text-center tracking-widest font-mono"
+                                        className="w-full pl-12 pr-4 py-4 bg-slate-900 border border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-white placeholder-slate-400 text-center tracking-widest font-mono"
                                         maxLength={6}
                                         required
                                         disabled={verifying}
                                     />
                                 </div>
-                                <p className="text-xs sm:text-sm text-gray-500">
+                                <p className="text-sm text-slate-400">
                                     Enter the 6-digit code from your console
                                 </p>
                             </div>
@@ -231,16 +239,16 @@ export default function LoginPage() {
                                 <button
                                     type="submit"
                                     disabled={verifying || code.length !== 6}
-                                    className="w-full bg-gradient-to-r from-green-500 to-blue-600 text-white py-3 sm:py-4 lg:py-5 rounded-xl sm:rounded-2xl font-medium text-base sm:text-lg hover:from-green-600 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-green-500/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                                    className="w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-xl font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
                                 >
                                     {verifying ? (
                                         <>
-                                            <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                                             <span>Verifying...</span>
                                         </>
                                     ) : (
                                         <>
-                                            <Check className="w-4 h-4 sm:w-5 sm:h-5" />
+                                            <Check className="w-5 h-5" />
                                             <span>Verify & Continue</span>
                                         </>
                                     )}
@@ -249,9 +257,10 @@ export default function LoginPage() {
                                 <button
                                     type="button"
                                     onClick={handleBackToPhone}
-                                    className="w-full border border-gray-300 text-gray-700 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-medium hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-gray-500/25 transition-all duration-200"
+                                    className="w-full border border-slate-600 text-slate-300 hover:bg-slate-700 py-4 rounded-xl font-medium transition-all duration-200 flex items-center justify-center space-x-2"
                                 >
-                                    Back to Phone
+                                    <ArrowLeft className="w-5 h-5" />
+                                    <span>Back to Phone</span>
                                 </button>
                             </div>
                         </form>
@@ -261,41 +270,33 @@ export default function LoginPage() {
                 {/* Message Display */}
                 {message && (
                     <div
-                        className={`mt-4 sm:mt-6 p-3 sm:p-4 rounded-xl sm:rounded-2xl flex items-center space-x-3 transition-all duration-300 ${messageType === "success"
-                                ? "bg-green-50 border border-green-200 text-green-800"
+                        className={`mt-6 p-4 rounded-xl flex items-center space-x-3 transition-all duration-300 ${
+                            messageType === "success"
+                                ? "bg-green-900/50 border border-green-700 text-green-300"
                                 : messageType === "error"
-                                    ? "bg-red-50 border border-red-200 text-red-800"
-                                    : "bg-blue-50 border border-blue-200 text-blue-800"
-                            }`}
+                                ? "bg-red-900/50 border border-red-700 text-red-300"
+                                : "bg-blue-900/50 border border-blue-700 text-blue-300"
+                        }`}
                     >
                         {messageType === "success" ? (
-                            <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 flex-shrink-0" />
+                            <Check className="w-5 h-5 text-green-400 flex-shrink-0" />
                         ) : (
-                            <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                            <AlertCircle className="w-5 h-5 flex-shrink-0" />
                         )}
-                        <p className="text-xs sm:text-sm">{message}</p>
+                        <p className="text-sm">{message}</p>
                     </div>
                 )}
 
-                {/* Message Display */}
-                {message && (
-                    <div
-                        className={`mt-4 sm:mt-6 p-3 sm:p-4 rounded-xl sm:rounded-2xl flex items-center space-x-3 transition-all duration-300 ${messageType === "success"
-                                ? "bg-green-50 border border-green-200 text-green-800"
-                                : messageType === "error"
-                                    ? "bg-red-50 border border-red-200 text-red-800"
-                                    : "bg-blue-50 border border-blue-200 text-blue-800"
-                            }`}
+                {/* Back to Home Link */}
+                <div className="text-center mt-8">
+                    <button
+                        onClick={() => router.push("/")}
+                        className="text-slate-400 hover:text-white transition-colors duration-200 flex items-center justify-center space-x-2 mx-auto"
                     >
-                        {messageType === "success" ? (
-                            <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 flex-shrink-0" />
-                        ) : (
-                            <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
-                        )}
-                        <p className="text-xs sm:text-sm">{message}</p>
-                    </div>
-                )}
-
+                        <ArrowLeft className="w-4 h-4" />
+                        <span>Back to Home</span>
+                    </button>
+                </div>
             </div>
         </div>
     );

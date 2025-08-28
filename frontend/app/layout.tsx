@@ -4,13 +4,13 @@ import React from "react";
 
 export const metadata = {
   title: "Phone Auth",
-  description: "Phone OTP auth demo",
+  description: "Secure phone OTP authentication platform",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-gray-50 text-slate-900">
+      <body className="min-h-screen bg-slate-950 text-white antialiased">
         {children}
       </body>
     </html>

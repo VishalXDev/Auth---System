@@ -12,7 +12,9 @@ import {
     Clock,
     Edit3,
     Check,
-    X
+    X,
+    Home,
+    ArrowLeft
 } from "lucide-react";
 
 export default function ProfilePage() {
@@ -79,10 +81,10 @@ export default function ProfilePage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
+            <div className="min-h-screen bg-slate-950 flex items-center justify-center">
                 <div className="flex flex-col items-center space-y-4">
                     <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                    <p className="text-gray-600 font-medium">Loading your profile...</p>
+                    <p className="text-slate-300 font-medium">Loading your profile...</p>
                 </div>
             </div>
         );
@@ -90,16 +92,16 @@ export default function ProfilePage() {
 
     if (error) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
-                <div className="bg-white rounded-3xl shadow-xl p-8 max-w-md w-full mx-4 text-center">
-                    <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl p-8 max-w-md w-full mx-4 text-center">
+                    <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
                         <X className="w-8 h-8 text-red-500" />
                     </div>
-                    <h2 className="text-xl font-bold text-gray-900 mb-2">Error</h2>
-                    <p className="text-red-600 mb-6">{error}</p>
+                    <h2 className="text-xl font-bold text-white mb-2">Error</h2>
+                    <p className="text-red-400 mb-6">{error}</p>
                     <button
                         onClick={() => router.push("/login")}
-                        className="w-full bg-blue-500 text-white py-3 rounded-2xl font-medium hover:bg-blue-600 transition-colors"
+                        className="w-full bg-blue-600 text-white py-3 rounded-xl font-medium hover:bg-blue-700 transition-colors"
                     >
                         Back to Login
                     </button>
@@ -117,30 +119,41 @@ export default function ProfilePage() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-4">
+        <div className="min-h-screen bg-slate-950 p-4">
             <div className="max-w-2xl mx-auto">
+                {/* Back Button */}
+                <div className="mb-6 pt-4">
+                    <button
+                        onClick={() => router.push("/")}
+                        className="inline-flex items-center space-x-2 text-slate-400 hover:text-white transition-colors"
+                    >
+                        <ArrowLeft className="w-4 h-4" />
+                        <span>Back to Home</span>
+                    </button>
+                </div>
+
                 {/* Header */}
-                <div className="text-center mb-8 pt-8">
-                    <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-4">
+                <div className="text-center mb-8">
+                    <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-600 rounded-full mb-4">
                         <User className="w-10 h-10 text-white" />
                     </div>
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Your Profile</h1>
-                    <p className="text-gray-600">Manage your account information</p>
+                    <h1 className="text-3xl font-bold text-white mb-2">Your Profile</h1>
+                    <p className="text-slate-400">Manage your account information</p>
                 </div>
 
                 {/* Profile Card */}
-                <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
-                    {/* Header with gradient */}
-                    <div className="bg-gradient-to-r from-blue-500 to-purple-600 px-8 py-6">
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
+                    {/* Header */}
+                    <div className="bg-slate-800 px-8 py-6 border-b border-slate-700">
                         <div className="flex items-center space-x-4">
-                            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                            <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
                                 <User className="w-8 h-8 text-white" />
                             </div>
                             <div className="text-white">
                                 <h2 className="text-xl font-bold">
                                     {user?.name || "Welcome!"}
                                 </h2>
-                                <p className="text-blue-100">Account Information</p>
+                                <p className="text-slate-400">Account Information</p>
                             </div>
                         </div>
                     </div>
@@ -148,13 +161,13 @@ export default function ProfilePage() {
                     {/* Profile Details */}
                     <div className="p-8 space-y-6">
                         {/* Name Section */}
-                        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
+                        <div className="flex items-center justify-between p-4 bg-slate-800 rounded-xl border border-slate-700">
                             <div className="flex items-center space-x-3">
-                                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                                    <User className="w-5 h-5 text-blue-600" />
+                                <div className="w-10 h-10 bg-blue-600/20 rounded-full flex items-center justify-center">
+                                    <User className="w-5 h-5 text-blue-400" />
                                 </div>
                                 <div>
-                                    <p className="text-sm font-medium text-gray-500">Display Name</p>
+                                    <p className="text-sm font-medium text-slate-400">Display Name</p>
                                     {isEditing ? (
                                         <div className="flex items-center space-x-2 mt-1">
                                             <input
@@ -162,28 +175,28 @@ export default function ProfilePage() {
                                                 value={name}
                                                 onChange={(e) => setName(e.target.value)}
                                                 placeholder="Enter your name"
-                                                className="border border-gray-300 rounded-lg px-3 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                className="bg-slate-700 border border-slate-600 text-white rounded-lg px-3 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                             />
                                             <button
                                                 onClick={handleSaveName}
                                                 disabled={savingName}
-                                                className="p-1 text-green-600 hover:bg-green-50 rounded"
+                                                className="p-1 text-green-400 hover:bg-green-500/10 rounded"
                                             >
                                                 {savingName ? (
-                                                    <div className="w-4 h-4 border-2 border-green-600 border-t-transparent rounded-full animate-spin" />
+                                                    <div className="w-4 h-4 border-2 border-green-400 border-t-transparent rounded-full animate-spin" />
                                                 ) : (
                                                     <Check className="w-4 h-4" />
                                                 )}
                                             </button>
                                             <button
                                                 onClick={handleCancelEdit}
-                                                className="p-1 text-red-600 hover:bg-red-50 rounded"
+                                                className="p-1 text-red-400 hover:bg-red-500/10 rounded"
                                             >
                                                 <X className="w-4 h-4" />
                                             </button>
                                         </div>
                                     ) : (
-                                        <p className="text-gray-900 font-semibold">
+                                        <p className="text-white font-semibold">
                                             {user?.name || "Not set"}
                                         </p>
                                     )}
@@ -192,7 +205,7 @@ export default function ProfilePage() {
                             {!isEditing && (
                                 <button
                                     onClick={() => setIsEditing(true)}
-                                    className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                                    className="p-2 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-full transition-colors"
                                 >
                                     <Edit3 className="w-4 h-4" />
                                 </button>
@@ -200,43 +213,41 @@ export default function ProfilePage() {
                         </div>
 
                         {/* Phone Section */}
-                        <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-2xl">
-                            <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                                <Phone className="w-5 h-5 text-green-600" />
+                        <div className="flex items-center space-x-3 p-4 bg-slate-800 rounded-xl border border-slate-700">
+                            <div className="w-10 h-10 bg-green-600/20 rounded-full flex items-center justify-center">
+                                <Phone className="w-5 h-5 text-green-400" />
                             </div>
-                            <div>
-                                <p className="text-sm font-medium text-gray-500">Phone Number</p>
-                                <p className="text-gray-900 font-semibold">{user?.phone}</p>
+                            <div className="flex-1">
+                                <p className="text-sm font-medium text-slate-400">Phone Number</p>
+                                <p className="text-white font-semibold">{user?.phone}</p>
                             </div>
-                            <div className="ml-auto">
-                                <div className="inline-flex items-center space-x-1 bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
-                                    <Shield className="w-3 h-3" />
-                                    <span>Verified</span>
-                                </div>
+                            <div className="inline-flex items-center space-x-1 bg-green-500/10 text-green-400 px-3 py-1 rounded-full text-xs font-medium border border-green-500/20">
+                                <Shield className="w-3 h-3" />
+                                <span>Verified</span>
                             </div>
                         </div>
 
                         {/* Account Created */}
-                        <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-2xl">
-                            <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                                <Calendar className="w-5 h-5 text-purple-600" />
+                        <div className="flex items-center space-x-3 p-4 bg-slate-800 rounded-xl border border-slate-700">
+                            <div className="w-10 h-10 bg-purple-600/20 rounded-full flex items-center justify-center">
+                                <Calendar className="w-5 h-5 text-purple-400" />
                             </div>
                             <div>
-                                <p className="text-sm font-medium text-gray-500">Member Since</p>
-                                <p className="text-gray-900 font-semibold">
+                                <p className="text-sm font-medium text-slate-400">Member Since</p>
+                                <p className="text-white font-semibold">
                                     {user?.createdAt ? formatDate(user.createdAt) : "Unknown"}
                                 </p>
                             </div>
                         </div>
 
-                        {/* Account ID (for reference) */}
-                        <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-2xl">
-                            <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-                                <Clock className="w-5 h-5 text-gray-600" />
+                        {/* Account ID */}
+                        <div className="flex items-center space-x-3 p-4 bg-slate-800 rounded-xl border border-slate-700">
+                            <div className="w-10 h-10 bg-slate-600/50 rounded-full flex items-center justify-center">
+                                <Clock className="w-5 h-5 text-slate-400" />
                             </div>
                             <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-gray-500">Account ID</p>
-                                <p className="text-gray-900 font-mono text-sm truncate">
+                                <p className="text-sm font-medium text-slate-400">Account ID</p>
+                                <p className="text-white font-mono text-sm truncate">
                                     {user?.id}
                                 </p>
                             </div>
@@ -244,10 +255,10 @@ export default function ProfilePage() {
                     </div>
 
                     {/* Actions */}
-                    <div className="border-t border-gray-100 p-8">
+                    <div className="border-t border-slate-700 p-8">
                         <button
                             onClick={handleLogout}
-                            className="w-full bg-gradient-to-r from-red-500 to-pink-600 text-white py-4 rounded-2xl font-medium text-lg hover:from-red-600 hover:to-pink-700 focus:outline-none focus:ring-4 focus:ring-red-500/25 transition-all duration-200 flex items-center justify-center space-x-2"
+                            className="w-full bg-red-600 text-white py-4 rounded-xl font-medium text-lg hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-600/25 transition-all duration-200 flex items-center justify-center space-x-2"
                         >
                             <LogOut className="w-5 h-5" />
                             <span>Sign Out</span>
@@ -259,22 +270,22 @@ export default function ProfilePage() {
                 <div className="mt-8 grid grid-cols-2 gap-4">
                     <button
                         onClick={() => router.push("/")}
-                        className="bg-white rounded-2xl shadow-md p-6 text-center hover:shadow-lg transition-shadow"
+                        className="bg-slate-900 border border-slate-800 rounded-xl shadow-lg p-6 text-center hover:border-slate-700 transition-colors"
                     >
-                        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <User className="w-6 h-6 text-blue-600" />
+                        <div className="w-12 h-12 bg-blue-600/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <Home className="w-6 h-6 text-blue-400" />
                         </div>
-                        <p className="font-medium text-gray-900">Home</p>
-                        <p className="text-sm text-gray-500">Go to main page</p>
+                        <p className="font-medium text-white">Home</p>
+                        <p className="text-sm text-slate-400">Go to main page</p>
                     </button>
 
-                    <button className="bg-white rounded-2xl shadow-md p-6 text-center hover:shadow-lg transition-shadow opacity-50 cursor-not-allowed">
-                        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <Shield className="w-6 h-6 text-gray-400" />
+                    <div className="bg-slate-900 border border-slate-800 rounded-xl shadow-lg p-6 text-center opacity-50">
+                        <div className="w-12 h-12 bg-slate-700/50 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <Shield className="w-6 h-6 text-slate-500" />
                         </div>
-                        <p className="font-medium text-gray-400">Security</p>
-                        <p className="text-sm text-gray-400">Coming soon</p>
-                    </button>
+                        <p className="font-medium text-slate-500">Security</p>
+                        <p className="text-sm text-slate-600">Coming soon</p>
+                    </div>
                 </div>
             </div>
         </div>
