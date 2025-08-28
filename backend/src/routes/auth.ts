@@ -7,8 +7,9 @@ import {
   attemptsExceeded,
   recordAttempt,
   hashOtp,
+  generateOtpCode, // ✅ use the shared generator
 } from "@/otp";
-import { limitVerifyByPhone } from "@/ratelimit";
+import { limitVerifyByPhone, limitSendByPhone } from "@/ratelimit"; // ✅ added send limiter
 import { zodReply, badRequest, ok } from "@/http";
 import {
   issueTokens,
@@ -57,15 +58,14 @@ router.post("/register", async (req, res) => {
 /**
  * POST /auth/send-otp
  */
-router.post("/send-otp", async (req, res) => {
+router.post("/send-otp", limitSendByPhone(), async (req, res) => {
   try {
     const { phone } = sendOtpSchema.parse(req.body);
 
     const devOtp = req.query.dev as string | undefined;
+    // ✅ Use shared generator for consistency (still allow ?dev=123456 in dev)
     const code =
-      devOtp && /^\d{6}$/.test(devOtp)
-        ? devOtp
-        : Math.floor(100000 + Math.random() * 900000).toString();
+      devOtp && /^\d{6}$/.test(devOtp) ? devOtp : generateOtpCode();
 
     const challengeId = crypto.randomUUID();
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000);

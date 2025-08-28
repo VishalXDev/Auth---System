@@ -65,52 +65,42 @@ export default function VerifyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
+    <div>
       {/* Background */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900"></div>
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl"></div>
+      <div>
+        <div></div>
+        <div></div>
+        <div></div>
       </div>
 
-      <div className="relative w-full max-w-md">
+      <div>
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-green-600 rounded-2xl mb-6 shadow-lg">
-            <Shield className="w-8 h-8 text-white" />
+        <div>
+          <div>
+            <Shield />
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">
-            Verify Your OTP
-          </h1>
-          <p className="text-slate-400">
-            Complete verification by entering your details below
-          </p>
+          <h1>Verify Your OTP</h1>
+          <p>Complete verification by entering your details below</p>
         </div>
 
         {/* Back Button */}
-        <button
-          onClick={() => router.back()}
-          className="mb-6 inline-flex items-center text-slate-400 hover:text-white transition-colors duration-200"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
+        <button onClick={() => router.back()}>
+          <ArrowLeft />
           <span>Back</span>
         </button>
 
         {/* Main Card */}
-        <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-8">
-          <form onSubmit={handleVerify} className="space-y-6">
+        <div>
+          <form onSubmit={handleVerify}>
             {/* Phone Number Input */}
-            <div className="space-y-2">
-              <label
-                htmlFor="phone"
-                className="text-sm font-medium text-slate-300 flex items-center"
-              >
-                <Phone className="w-4 h-4 mr-2 text-blue-400" />
+            <div>
+              <label htmlFor="phone">
+                <Phone />
                 Phone Number
               </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Phone className="h-5 w-5 text-slate-400" />
+              <div>
+                <div>
+                  <Phone />
                 </div>
                 <input
                   id="phone"
@@ -118,28 +108,22 @@ export default function VerifyPage() {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="+919876543210"
-                  className="w-full pl-12 pr-4 py-4 bg-slate-900 border border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-white placeholder-slate-400"
                   required
                   disabled={loading}
                 />
               </div>
-              <p className="text-sm text-slate-400">
-                Enter phone number in E.164 format
-              </p>
+              <p>Enter phone number in E.164 format</p>
             </div>
 
             {/* Challenge ID Input */}
-            <div className="space-y-2">
-              <label
-                htmlFor="challengeId"
-                className="text-sm font-medium text-slate-300 flex items-center"
-              >
-                <Key className="w-4 h-4 mr-2 text-blue-400" />
+            <div>
+              <label htmlFor="challengeId">
+                <Key />
                 Challenge ID
               </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Key className="h-5 w-5 text-slate-400" />
+              <div>
+                <div>
+                  <Key />
                 </div>
                 <input
                   id="challengeId"
@@ -147,28 +131,22 @@ export default function VerifyPage() {
                   value={challengeId}
                   onChange={(e) => setChallengeId(e.target.value)}
                   placeholder="Enter challenge ID from send-otp response"
-                  className="w-full pl-12 pr-4 py-4 bg-slate-900 border border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-white placeholder-slate-400"
                   required
                   disabled={loading}
                 />
               </div>
-              <p className="text-sm text-slate-400">
-                UUID or CUID from the send-otp response
-              </p>
+              <p>UUID or CUID from the send-otp response</p>
             </div>
 
             {/* OTP Code Input */}
-            <div className="space-y-2">
-              <label
-                htmlFor="code"
-                className="text-sm font-medium text-slate-300 flex items-center"
-              >
-                <Shield className="w-4 h-4 mr-2 text-blue-400" />
+            <div>
+              <label htmlFor="code">
+                <Shield />
                 Verification Code
               </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Shield className="h-5 w-5 text-slate-400" />
+              <div>
+                <div>
+                  <Shield />
                 </div>
                 <input
                   id="code"
@@ -179,30 +157,26 @@ export default function VerifyPage() {
                   }
                   placeholder="000000"
                   maxLength={6}
-                  className="w-full pl-12 pr-4 py-4 bg-slate-900 border border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-white placeholder-slate-400 text-center tracking-widest font-mono"
                   required
                   disabled={loading}
                 />
               </div>
-              <p className="text-sm text-slate-400">
-                Enter the 6-digit OTP code
-              </p>
+              <p>Enter the 6-digit OTP code</p>
             </div>
 
             {/* Submit Button */}
             <button
               type="submit"
               disabled={loading || code.length !== 6}
-              className="w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-xl font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
             >
               {loading ? (
                 <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <div />
                   <span>Verifying...</span>
                 </>
               ) : (
                 <>
-                  <Check className="w-5 h-5" />
+                  <Check />
                   <span>Verify OTP</span>
                 </>
               )}
@@ -210,19 +184,13 @@ export default function VerifyPage() {
           </form>
 
           {/* Additional Actions */}
-          <div className="mt-6 pt-6 border-t border-slate-700">
-            <div className="flex items-center justify-center space-x-6 text-sm">
-              <button
-                onClick={() => router.push("/login")}
-                className="flex items-center text-blue-400 hover:text-blue-300 font-medium transition-colors duration-200"
-              >
-                <User className="w-4 h-4 mr-1" />
+          <div>
+            <div>
+              <button onClick={() => router.push("/login")}>
+                <User />
                 Go to Login
               </button>
-              <button
-                onClick={() => router.push("/")}
-                className="flex items-center text-slate-400 hover:text-white font-medium transition-colors duration-200"
-              >
+              <button onClick={() => router.push("/")}>
                 Home
               </button>
             </div>
@@ -231,35 +199,25 @@ export default function VerifyPage() {
 
         {/* Message Display */}
         {message && (
-          <div
-            className={`mt-6 p-4 rounded-xl flex items-center space-x-3 transition-all duration-300 ${
-              messageType === "success"
-                ? "bg-green-900/50 border border-green-700 text-green-300"
-                : messageType === "error"
-                ? "bg-red-900/50 border border-red-700 text-red-300"
-                : "bg-blue-900/50 border border-blue-700 text-blue-300"
-            }`}
-          >
+          <div>
             {messageType === "success" ? (
-              <Check className="w-5 h-5 text-green-400 flex-shrink-0" />
+              <Check />
             ) : (
-              <AlertCircle className="w-5 h-5 flex-shrink-0" />
+              <AlertCircle />
             )}
-            <p className="text-sm">{message}</p>
+            <p>{message}</p>
           </div>
         )}
 
         {/* Info Card */}
-        <div className="mt-6 bg-slate-800/30 rounded-xl p-6 border border-slate-700">
-          <div className="flex items-start space-x-3">
-            <div className="flex-shrink-0">
-              <Clock className="w-5 h-5 text-blue-400 mt-0.5" />
+        <div>
+          <div>
+            <div>
+              <Clock />
             </div>
             <div>
-              <h3 className="text-sm font-medium text-blue-300 mb-2">
-                Need Help?
-              </h3>
-              <p className="text-sm text-slate-400 leading-relaxed">
+              <h3>Need Help?</h3>
+              <p>
                 Make sure you have the correct challenge ID from your send-otp
                 request. OTP codes expire after 5 minutes and have a maximum of
                 5 attempts.
