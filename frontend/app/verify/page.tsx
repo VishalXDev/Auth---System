@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import api from "@/lib/api";
 import { setAccessToken } from "@/lib/auth";
+import { toE164 } from "@/app/utils/phone"; // ✅ added formatter
 import {
   Phone,
   Shield,
@@ -42,7 +43,7 @@ export default function VerifyPage() {
 
     try {
       const res = await api.post("/auth/verify-otp", {
-        phone,
+        phone: toE164(phone), // ✅ ensure backend accepts
         challengeId,
         code,
       });
