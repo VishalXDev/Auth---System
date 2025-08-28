@@ -1,59 +1,77 @@
-import axios from "axios";
-import { 
-  getAccessToken, 
-  getRefreshToken, 
-  setAccessToken, 
-  clearTokens 
-} from "./auth";
+import axios, { AxiosRequestConfig } from "axios";
+import { getAccessToken, setAccessToken, clearTokens } from "./auth";
+
+// Extend Axios config to allow custom marker
+interface RetryConfig extends AxiosRequestConfig {
+  __retried?: boolean;
+}
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3004",
-  withCredentials: true, // ensures cookies like refresh token are sent
+  withCredentials: true, // send cookies (refresh token)
 });
 
-// Request interceptor → attach access token
+// Attach access token if present
 api.interceptors.request.use((config) => {
   const token = getAccessToken();
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+    config.headers = config.headers || {};
+    (config.headers as any).Authorization = `Bearer ${token}`;
   }
   return config;
 });
 
-// Response interceptor → handle token expiry
+// --- Handle 401 with refresh (queueing) ---
+let isRefreshing = false;
+let queued: Array<(token: string | null) => void> = [];
+
 api.interceptors.response.use(
-  (response) => response,
+  (res) => res,
   async (error) => {
-    const originalRequest = error.config;
+    const config = error.config as RetryConfig;
+    const response = error.response;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      try {
-        const refreshToken = getRefreshToken();
-        if (!refreshToken) throw new Error("No refresh token");
-
-        const res = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3004"}/auth/refresh`,
-          { refreshToken },
-          { withCredentials: true }
-        );
-
-        const newAccessToken = res.data.accessToken;
-        setAccessToken(newAccessToken);
-
-        // retry original request
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-        return api(originalRequest);
-      } catch (refreshErr) {
-        console.error("Refresh token failed", refreshErr);
-        clearTokens();
-        if (typeof window !== "undefined") {
-          window.location.href = "/login";
-        }
-      }
+    if (!response || response.status !== 401 || config.__retried) {
+      return Promise.reject(error);
     }
 
-    return Promise.reject(error);
+    if (isRefreshing) {
+      // Queue this request until refresh completes
+      return new Promise((resolve, reject) => {
+        queued.push((newToken) => {
+          if (!newToken) return reject(error);
+          config.headers = config.headers || {};
+          (config.headers as any).Authorization = `Bearer ${newToken}`;
+          config.__retried = true;
+          resolve(api(config));
+        });
+      });
+    }
+
+    try {
+      isRefreshing = true;
+      const { data } = await api.post("/auth/refresh"); // returns { accessToken }
+      setAccessToken(data.accessToken);
+
+      // Replay all queued requests
+      queued.forEach((fn) => fn(data.accessToken));
+      queued = [];
+
+      config.headers = config.headers || {};
+      (config.headers as any).Authorization = `Bearer ${data.accessToken}`;
+      config.__retried = true;
+      return api(config);
+    } catch (e) {
+      queued.forEach((fn) => fn(null));
+      queued = [];
+      clearTokens();
+      if (typeof window !== "undefined") {
+        window.location.href = "/"; // go back to OTP entry page
+      }
+      return Promise.reject(error);
+    } finally {
+      isRefreshing = false;
+    }
   }
 );
 

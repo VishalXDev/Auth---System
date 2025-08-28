@@ -3,7 +3,16 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import api from "@/lib/api";
+import { setAccessToken } from "@/lib/auth";
 import { Phone, Send, Shield, ArrowRight, Check, AlertCircle } from "lucide-react";
+
+// E.164 formatter (assume India for 10-digit input)
+function toE164(raw: string) {
+    const s = raw.replace(/\s+/g, "");
+    if (/^\d{10}$/.test(s)) return `+91${s}`;
+    if (/^\+[1-9]\d{7,14}$/.test(s)) return s;
+    throw new Error("Enter phone like +919876543210");
+}
 
 export default function LoginPage() {
     const [phone, setPhone] = useState("");
@@ -27,7 +36,8 @@ export default function LoginPage() {
         setLoading(true);
 
         try {
-            const res = await api.post("/auth/send-otp", { phone });
+            const payload = { phone: toE164(phone) };
+            const res = await api.post("/auth/send-otp", payload);
             setChallengeId(res.data.challengeId);
             setStep("otp");
             showMessage("OTP sent successfully! Check your console for the demo code.", "success");
@@ -46,13 +56,13 @@ export default function LoginPage() {
 
         try {
             const res = await api.post("/auth/verify-otp", {
-                phone,
+                phone: toE164(phone),
                 challengeId,
                 code,
             });
 
-            // Store access token
-            localStorage.setItem("accessToken", res.data.accessToken);
+            // Store access token securely
+            setAccessToken(res.data.accessToken);
 
             showMessage("Login successful! Redirecting...", "success");
 
@@ -81,27 +91,41 @@ export default function LoginPage() {
                     <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-4 lg:mb-6">
                         <Phone className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-white" />
                     </div>
-                    <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 mb-2 lg:mb-4">Welcome Back</h1>
+                    <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 mb-2 lg:mb-4">
+                        Welcome Back
+                    </h1>
                     <p className="text-sm sm:text-base lg:text-lg text-gray-600">
-                        {step === "phone" ? "Enter your phone number to continue" : "Enter the verification code"}
+                        {step === "phone"
+                            ? "Enter your phone number to continue"
+                            : "Enter the verification code"}
                     </p>
                 </div>
 
                 {/* Progress Indicator */}
                 <div className="flex items-center justify-center mb-6 sm:mb-8 lg:mb-10">
                     <div className="flex items-center space-x-3 sm:space-x-4 lg:space-x-6">
-                        <div className={`flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 rounded-full border-2 transition-all duration-300 ${step === "phone"
-                                ? "border-blue-500 bg-blue-500 text-white"
-                                : "border-green-500 bg-green-500 text-white"
-                            }`}>
-                            {step === "otp" ? <Check className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5" /> : "1"}
+                        <div
+                            className={`flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 rounded-full border-2 transition-all duration-300 ${step === "phone"
+                                    ? "border-blue-500 bg-blue-500 text-white"
+                                    : "border-green-500 bg-green-500 text-white"
+                                }`}
+                        >
+                            {step === "otp" ? (
+                                <Check className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
+                            ) : (
+                                "1"
+                            )}
                         </div>
-                        <div className={`h-0.5 w-12 sm:w-16 lg:w-20 transition-all duration-300 ${step === "otp" ? "bg-green-500" : "bg-gray-300"
-                            }`} />
-                        <div className={`flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 rounded-full border-2 transition-all duration-300 ${step === "otp"
-                                ? "border-blue-500 bg-blue-500 text-white"
-                                : "border-gray-300 bg-white text-gray-400"
-                            }`}>
+                        <div
+                            className={`h-0.5 w-12 sm:w-16 lg:w-20 transition-all duration-300 ${step === "otp" ? "bg-green-500" : "bg-gray-300"
+                                }`}
+                        />
+                        <div
+                            className={`flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 rounded-full border-2 transition-all duration-300 ${step === "otp"
+                                    ? "border-blue-500 bg-blue-500 text-white"
+                                    : "border-gray-300 bg-white text-gray-400"
+                                }`}
+                        >
                             <Shield className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
                         </div>
                     </div>
@@ -112,7 +136,10 @@ export default function LoginPage() {
                     {step === "phone" ? (
                         <form onSubmit={handleSendOtp} className="space-y-4 sm:space-y-6">
                             <div className="space-y-2">
-                                <label htmlFor="phone" className="text-sm sm:text-base font-medium text-gray-700">
+                                <label
+                                    htmlFor="phone"
+                                    className="text-sm sm:text-base font-medium text-gray-700"
+                                >
                                     Phone Number
                                 </label>
                                 <div className="relative">
@@ -158,7 +185,8 @@ export default function LoginPage() {
                         <form onSubmit={handleVerifyOtp} className="space-y-4 sm:space-y-6">
                             <div className="text-center mb-4 sm:mb-6">
                                 <p className="text-sm sm:text-base text-gray-600">
-                                    Code sent to <span className="font-semibold text-gray-900">{phone}</span>
+                                    Code sent to{" "}
+                                    <span className="font-semibold text-gray-900">{phone}</span>
                                 </p>
                                 <button
                                     type="button"
@@ -170,7 +198,10 @@ export default function LoginPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <label htmlFor="code" className="text-sm sm:text-base font-medium text-gray-700">
+                                <label
+                                    htmlFor="code"
+                                    className="text-sm sm:text-base font-medium text-gray-700"
+                                >
                                     Verification Code
                                 </label>
                                 <div className="relative">
@@ -181,7 +212,9 @@ export default function LoginPage() {
                                         id="code"
                                         type="text"
                                         value={code}
-                                        onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                                        onChange={(e) =>
+                                            setCode(e.target.value.replace(/\D/g, "").slice(0, 6))
+                                        }
                                         placeholder="000000"
                                         className="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-3 sm:py-4 lg:py-5 border border-gray-300 rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-base sm:text-lg text-center tracking-widest font-mono"
                                         maxLength={6}
@@ -227,12 +260,14 @@ export default function LoginPage() {
 
                 {/* Message Display */}
                 {message && (
-                    <div className={`mt-4 sm:mt-6 p-3 sm:p-4 rounded-xl sm:rounded-2xl flex items-center space-x-3 transition-all duration-300 ${messageType === "success"
-                            ? "bg-green-50 border border-green-200 text-green-800"
-                            : messageType === "error"
-                                ? "bg-red-50 border border-red-200 text-red-800"
-                                : "bg-blue-50 border border-blue-200 text-blue-800"
-                        }`}>
+                    <div
+                        className={`mt-4 sm:mt-6 p-3 sm:p-4 rounded-xl sm:rounded-2xl flex items-center space-x-3 transition-all duration-300 ${messageType === "success"
+                                ? "bg-green-50 border border-green-200 text-green-800"
+                                : messageType === "error"
+                                    ? "bg-red-50 border border-red-200 text-red-800"
+                                    : "bg-blue-50 border border-blue-200 text-blue-800"
+                            }`}
+                    >
                         {messageType === "success" ? (
                             <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 flex-shrink-0" />
                         ) : (
@@ -242,12 +277,25 @@ export default function LoginPage() {
                     </div>
                 )}
 
-                {/* Development Note */}
-                <div className="mt-6 sm:mt-8 text-center">
-                    <p className="text-xs sm:text-sm text-gray-500">
-                        Development Mode: Check console for OTP codes
-                    </p>
-                </div>
+                {/* Message Display */}
+                {message && (
+                    <div
+                        className={`mt-4 sm:mt-6 p-3 sm:p-4 rounded-xl sm:rounded-2xl flex items-center space-x-3 transition-all duration-300 ${messageType === "success"
+                                ? "bg-green-50 border border-green-200 text-green-800"
+                                : messageType === "error"
+                                    ? "bg-red-50 border border-red-200 text-red-800"
+                                    : "bg-blue-50 border border-blue-200 text-blue-800"
+                            }`}
+                    >
+                        {messageType === "success" ? (
+                            <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 flex-shrink-0" />
+                        ) : (
+                            <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                        )}
+                        <p className="text-xs sm:text-sm">{message}</p>
+                    </div>
+                )}
+
             </div>
         </div>
     );

@@ -89,12 +89,27 @@ export default function Home() {
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
               <span className="text-xs sm:text-sm font-medium text-gray-700">System Online</span>
               <div className="text-xs sm:text-sm text-gray-500 hidden sm:block">•</div>
+
+              {/* Local Backend */}
               <span className="text-xs sm:text-sm text-gray-600 hidden sm:block">
-                Backend: <code className="bg-gray-100 px-2 py-0.5 rounded text-xs">
-                  {process.env.NEXT_PUBLIC_API_URL || "http://localhost:3004"}
+                Local:{" "}
+                <code className="bg-gray-100 px-2 py-0.5 rounded text-xs">
+                  {process.env.NEXT_PUBLIC_API_URL_LOCAL}
+                </code>
+              </span>
+
+              {/* Production Backend */}
+              <span className="text-xs sm:text-sm text-gray-600 hidden sm:block">
+                Production:{" "}
+                <code className="bg-gray-100 px-2 py-0.5 rounded text-xs">
+                  {process.env.NEXT_PUBLIC_API_URL}
                 </code>
               </span>
             </div>
+
+
+
+
           </div>
         </div>
       </div>
@@ -217,12 +232,75 @@ export default function Home() {
       </div>
       {/* Footer */}
       <div className="bg-white border-t border-gray-200 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-gray-500">
-            Built with ❤️ by VishalXDev
-          </p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 items-center text-center sm:text-left">
+            {/* Left: Brand */}
+            <div>
+              <h3 className="text-lg font-bold text-gray-900">VishalXDev</h3>
+              <p className="text-sm text-gray-500 mt-1">
+                Built with ❤️ by <span className="font-semibold">VishalXDev</span>
+              </p>
+            </div>
+
+            {/* Middle: Quick Links */}
+            <div className="flex flex-col sm:flex-row justify-center sm:justify-center gap-3 sm:gap-6 text-sm text-gray-600">
+              <Link href="/" className="hover:text-blue-600 transition-colors">
+                Home
+              </Link>
+              <Link href="/login" className="hover:text-blue-600 transition-colors">
+                Login
+              </Link>
+              <Link href="/profile" className="hover:text-blue-600 transition-colors">
+                Profile
+              </Link>
+            </div>
+
+            {/* Right: Social Links */}
+            <div className="flex justify-center sm:justify-end space-x-4">
+              <a
+                href="https://github.com/VishalXDev"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-500 hover:text-gray-900 transition-colors"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path
+                    fillRule="evenodd"
+                    d="M12 2C6.475 2 2 6.486 2 12.021c0 4.424 2.867 8.166 6.84 9.504.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.704-2.782.605-3.37-1.34-3.37-1.34-.454-1.154-1.11-1.462-1.11-1.462-.907-.62.07-.608.07-.608 1.003.07 1.53 1.03 1.53 1.03.892 1.531 2.341 1.089 2.91.833.092-.647.35-1.089.636-1.339-2.22-.253-4.555-1.112-4.555-4.947 0-1.092.39-1.987 1.03-2.686-.103-.253-.446-1.273.098-2.654 0 0 .84-.27 2.75 1.026A9.554 9.554 0 0112 6.844c.85.004 1.705.115 2.504.338 1.91-1.296 2.749-1.026 2.749-1.026.545 1.381.202 2.401.1 2.654.64.699 1.028 1.594 1.028 2.686 0 3.844-2.339 4.69-4.566 4.938.36.31.678.921.678 1.856 0 1.338-.012 2.418-.012 2.747 0 .267.18.578.688.48C19.136 20.184 22 16.443 22 12.021 22 6.486 17.523 2 12 2z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </a>
+              <a
+                href="https://twitter.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-500 hover:text-blue-400 transition-colors"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M22.46 6c-.77.35-1.6.59-2.46.7a4.3 4.3 0 001.88-2.38 8.59 8.59 0 01-2.72 1.04 4.28 4.28 0 00-7.29 3.9A12.13 12.13 0 013 4.8a4.28 4.28 0 001.32 5.7c-.65-.02-1.27-.2-1.8-.5v.05a4.28 4.28 0 003.44 4.2c-.31.08-.64.13-1 .13-.24 0-.47-.02-.7-.06a4.28 4.28 0 004 2.96A8.6 8.6 0 012 19.54a12.12 12.12 0 006.56 1.92c7.88 0 12.2-6.53 12.2-12.2 0-.19 0-.39-.01-.58A8.73 8.73 0 0022.46 6z" />
+                </svg>
+              </a>
+              <a
+                href="https://linkedin.com/in/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-500 hover:text-blue-700 transition-colors"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M19 0h-14c-2.76 0-5 2.24-5 5v14c0 2.76 2.24 5 5 5h14c2.762 0 5-2.24 5-5v-14c0-2.76-2.238-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.268c-.966 0-1.75-.792-1.75-1.766s.784-1.766 1.75-1.766c.964 0 1.75.792 1.75 1.766s-.786 1.766-1.75 1.766zm13.5 11.268h-3v-5.604c0-3.367-4-3.113-4 0v5.604h-3v-10h3v1.354c1.396-2.586 7-2.777 7 2.476v6.17z" />
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          {/* Bottom small text */}
+          <div className="mt-6 text-center text-xs text-gray-400">
+            © {new Date().getFullYear()} VishalXDev. All rights reserved.
+          </div>
         </div>
       </div>
+
     </div>
   );
 }
