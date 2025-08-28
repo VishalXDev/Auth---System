@@ -1,4 +1,5 @@
 // app/page.tsx
+"use client";
 import Link from "next/link";
 import {
   Phone,
@@ -11,25 +12,38 @@ import {
   CheckCircle,
   Star,
 } from "lucide-react";
+import { useEffect } from "react";
 
 export default function Home() {
+  // ✅ useEffect goes here (top level)
+  useEffect(() => {
+    console.log("🌐 Frontend running on http://localhost:3000");
+    console.log("⚡ Next.js + Tailwind + API ready");
+    console.log("📱 Login with phone → receive OTP → verify");
+  }, []);
+
+  // ✅ features array stays separate
   const features = [
     {
       icon: Shield,
       title: "Secure Authentication",
-      description: "Military-grade encryption with quantum-resistant algorithms protecting your digital identity",
+      description:
+        "Military-grade encryption with quantum-resistant algorithms protecting your digital identity",
     },
     {
       icon: Zap,
       title: "Lightning Fast",
-      description: "Sub-second verification with our neural network-powered authentication engine",
+      description:
+        "Sub-second verification with our neural network-powered authentication engine",
     },
     {
       icon: Lock,
       title: "Privacy First",
-      description: "Zero-knowledge architecture ensures your data remains completely anonymous",
-    }
+      description:
+        "Zero-knowledge architecture ensures your data remains completely anonymous",
+    },
   ];
+
 
   return (
     <div className="min-h-screen bg-white text-black">
